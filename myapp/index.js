@@ -11,8 +11,20 @@ const url = require('url');
 
 // The server should response to all requests with a string
 const server = http.createServer(function (req, res) {
+    // get the url and parse it
+    const parsedUrl = url.parse(req.url, true);
+
+    // get the path
+    const path = parsedUrl.pathname;
+    console.log(path);
+    const trimmedPath = path.replace(/^\/+|\/+$/g, '');
     
-    res.end('Hello World\n');
+    // send the respond
+    res.end("Hello World");
+
+    // log the request path
+    console.log('Request received on path: ' + trimmedPath);
+
 });
 
 
