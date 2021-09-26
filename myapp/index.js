@@ -19,11 +19,14 @@ const server = http.createServer(function (req, res) {
     console.log(path);
     const trimmedPath = path.replace(/^\/+|\/+$/g, '');
     
+    // Get the HTTP request
+    const method = req.method.toLowerCase();
+
     // send the respond
     res.end("Hello World");
 
     // log the request path
-    console.log('Request received on path: ' + trimmedPath);
+    console.log('Request received on path: ' + trimmedPath + ' with method: ' + method );
 
 });
 
