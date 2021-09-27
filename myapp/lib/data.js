@@ -44,7 +44,13 @@ lib.create = function (dir, file, data, callback) {
     });
 };
 
-
+// read data from a file
+lib.read = function (dir, file, callback) {
+    const fileToRead = lib.baseDir + dir + '/' + file + '.json';
+    fs.readFile(fileToRead, 'utf-8', function (err, data) {
+        callback(err, data);
+    })
+};
 
 // export the module
 module.exports = lib;
