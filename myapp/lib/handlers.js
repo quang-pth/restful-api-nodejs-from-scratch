@@ -527,6 +527,64 @@ handlers._checks.put = function (data, callback) {
 
 }
 
+// check - delete
+// required data: id
+// optional: none
+handlers._checks.delete = function (data, callback) {
+    // check that the phone number is valid
+    const id = typeof (data.queryStringObject.id) == 'string' && data.queryStringObject.id.trim().length == 19 ? data.queryStringObject.id.trim() : false;
+    if (id) {
+        // lookup the check
+        _data.read('checks', id, function (err, checkData) {
+            if (!err && checkData) {
+                // get the token from the headers
+                const token = typeof (data.headers.token) == 'string' ? data.headers.token : false;
+                // verify that the given token is valid for the phone number
+                handlers._tokens.verifyToken(token, checkData.userPhone, function (tokenIsValid) {
+                    if (tokenIsValid) {
+                        // delete the check data
+                        _data.delete('checks', id, function (err) {
+                            if (!err) {
+                                // lookup the user
+                                _data.read('users', checkData.userPhone, function (err, userData) {
+                                    if (!err && userData) {
+                                        const userChecks = typeof (userData.checks) == 'object' && userData.checks instanceof Array ? userData.checks : [];
+                                        // remove the deleted checks form the check list
+                                        const checkPosition = userChecks.indexOf(id);
+                                        if (checkPosition > -1) {
+                                            userChecks.splice(checkPosition, 1);
+                                            // re-save the user's data
+                                            _data.update('users', checkData.userPhone, userData, function (err) {
+                                                if (!err) {
+                                                    callback(200);
+                                                } else {
+                                                    callback(500, { 'Error': 'Could not update the user' });
+                                                }
+                                            });
+                                        } else {
+                                            callback(500, { "Error": "Could not find the check on the user\'s object" });
+                                        }
+                                    } else {
+                                        callback(400, { 'Error': 'Could not find the user who created the check' });
+                                    }
+                                });    
+                            } else {
+                                callback(500, { "Error": "Could not delete the check data" });
+                           }
+                        });
+                    } else {
+                        callback(403, { 'Error': 'Token is not valid or expired' });
+                    }
+                })
+            } else {
+                callback(400, { "Error": "Check ID does not exist" });
+           }
+        });
+    } else {
+        callback(400, { 'Error': 'Missing required field' });
+    }
+}
+
 
 // export the module
 module.exports = handlers;
