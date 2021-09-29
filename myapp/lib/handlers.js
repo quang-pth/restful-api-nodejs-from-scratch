@@ -176,7 +176,31 @@ handlers._users.delete = function (data, callback) {
                     if (!err && userData) {
                         _data.delete('users', phone, function (err) {
                             if (!err) {
-                                callback(200);
+                                // delete each of the checks associated with the user
+                                const userChecks = typeof (userData.checks) == 'object' && userData.checks instanceof Array ? userData.checks : [];
+                                const checksToDelete = userChecks.length;
+                                if (checksToDelete) {
+                                    let checksDeleted = 0;
+                                    let deletionErros = false;
+                                    userChecks.forEach(checkId => {
+                                        // delete the check
+                                        _data.delete('checks', checkId, function (err) {
+                                            if (err) {
+                                                deletionErros = true;
+                                            }
+                                            checksDeleted++;
+                                            if (checksDeleted === checksToDelete) {
+                                                if (!deletionErros)  {
+                                                    callback(200);
+                                                } else {
+                                                    callback(500, { "Error": "Error encountered when attempting to delete all of the user\'s checks. All check may not have been deleted from the system successfully" });
+                                                }
+                                            }
+                                        });
+                                    });
+                                } else {
+                                    callback(200);
+                                }
                             } else {
                                 callback(500, { 'Error': 'Could not find the specified user' });
                             }
@@ -375,6 +399,13 @@ handlers._checks.post = function (data, callback) {
     const method = typeof (data.payload.method) == 'string' && ['get', 'post', 'put', 'delete'].indexOf(data.payload.method) > -1 ? data.payload.method : false;
     const successCodes = typeof (data.payload.successCodes) == 'object' && data.payload.successCodes instanceof Array && data.payload.successCodes.length ? data.payload.successCodes : false;
     const timeoutSeconds = typeof (data.payload.timeoutSeconds) == 'number' && data.payload.timeoutSeconds % 1 === 0 && data.payload.timeoutSeconds >= 1 && data.payload.timeoutSeconds <= 5 ? data.payload.timeoutSeconds : false;
+    
+    console.log(protocol);
+    console.log(url);
+    console.log(method);
+    console.log(successCodes);
+    console.log(timeoutSeconds);
+    console.log(protocol && url && method && successCodes && timeoutSeconds);
 
     if (protocol && url && method && successCodes && timeoutSeconds) {
         // get the token from the headers
