@@ -13,6 +13,11 @@ enviroments.staging = {
     'envName': 'staging',
     'hashingSecret': 'thisIsASecret',
     'maxChecks': 5,
+    'twilio': {
+        'accountSid': 'AC9f085e2f80f48ffffdb61bb3d1542a72',
+        'authToken': 'e2e71530ddb972e6c7b6ac23e246e7a3',
+        'fromPhone': '+18565224686'
+    }
 };
 
 
@@ -23,6 +28,11 @@ enviroments.production = {
     'envName': 'production',
     'hashingSecret': 'thisIsASecret',
     'maxChecks': 5,
+    'twilio': {
+        'accountSid': 'AC9f085e2f80f48ffffdb61bb3d1542a72',
+        'authToken': 'e2e71530ddb972e6c7b6ac23e246e7a3',
+        'fromPhone': '+18565224686'
+    }
 };
 
 // determine which enviroment was passed as a command-line argument

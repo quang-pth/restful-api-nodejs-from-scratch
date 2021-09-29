@@ -15,6 +15,11 @@ const fs = require('fs');
 const handlers = require('./lib/handlers');
 const helpers = require('./lib/helpers');
 
+// @TODO 
+// helpers.sendTwilioSms('969883124', 'RESTFUL API WITH NODE JS FROM SCRATCH IS WORKED', function (err) {
+//     console.log('This was the error: ', err);
+// });
+
 // instantiate the HTTP server
 const httpServer = http.createServer(function (req, res) {
     unifiedServer(req, res);
