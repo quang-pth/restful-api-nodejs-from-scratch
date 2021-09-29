@@ -30,7 +30,7 @@ handlers._users.post = function (dataToStore, callback) {
     // check that all required fields are filled out
     const firstName = typeof (dataToStore.payload.firstName) == 'string' && dataToStore.payload.firstName.trim().length > 0 ? dataToStore.payload.firstName.trim() : false;
     const lastName = typeof (dataToStore.payload.lastName) == 'string' && dataToStore.payload.lastName.trim().length > 0 ? dataToStore.payload.lastName.trim() : false;
-    const phone = typeof (dataToStore.payload.phone) == 'string' && dataToStore.payload.phone.trim().length == 10 ? dataToStore.payload.phone.trim() : false;
+    const phone = typeof (dataToStore.payload.phone) == 'string' && dataToStore.payload.phone.trim().length ? dataToStore.payload.phone.trim() : false;
     const password = typeof (dataToStore.payload.password) == 'string' && dataToStore.payload.password.trim().length > 0 ? dataToStore.payload.password.trim() : false;
     const tosAgreement = typeof (dataToStore.payload.tosAgreement) == 'boolean' && dataToStore.payload.tosAgreement ? true : false;
 
@@ -82,7 +82,7 @@ handlers._users.post = function (dataToStore, callback) {
 // optional data: none
 handlers._users.get = function (requestedData, callback) {
     // check that the phone number is valid
-    const phone = typeof (requestedData.queryStringObject.phone) == 'string' && requestedData.queryStringObject.phone.trim().length == 10 ? requestedData.queryStringObject.phone.trim() : false;
+    const phone = typeof (requestedData.queryStringObject.phone) == 'string' && requestedData.queryStringObject.phone.trim().length ? requestedData.queryStringObject.phone.trim() : false;
     if (phone) {
         // get the token from the headers
         const token = typeof (requestedData.headers.token) == 'string' ? requestedData.headers.token : false;
@@ -113,7 +113,7 @@ handlers._users.get = function (requestedData, callback) {
 // optional data: firstName, lastName, password (1 must be specified)
 handlers._users.put = function (dataToUpdate, callback) {
     // check for the required field
-    const phone = typeof (dataToUpdate.payload.phone) == 'string' && dataToUpdate.payload.phone.trim().length == 10 ? dataToUpdate.payload.phone.trim() : false;
+    const phone = typeof (dataToUpdate.payload.phone) == 'string' && dataToUpdate.payload.phone.trim() ? dataToUpdate.payload.phone.trim() : false;
     //  check optional field
     const firstName = typeof (dataToUpdate.payload.firstName) == 'string' && dataToUpdate.payload.firstName.trim().length > 0 ? dataToUpdate.payload.firstName.trim() : false;
     const lastName = typeof (dataToUpdate.payload.lastName) == 'string' && dataToUpdate.payload.lastName.trim().length > 0 ? dataToUpdate.payload.lastName.trim() : false;
@@ -164,7 +164,7 @@ handlers._users.put = function (dataToUpdate, callback) {
 // required data: phone
 handlers._users.delete = function (data, callback) {
     // check that the phone number is valid
-    const phone = typeof (data.queryStringObject.phone) == 'string' && data.queryStringObject.phone.trim().length == 10 ? data.queryStringObject.phone.trim() : false;
+    const phone = typeof (data.queryStringObject.phone) == 'string' && data.queryStringObject.phone.trim().length ? data.queryStringObject.phone.trim() : false;
     if (phone) {
         // get the token from the headers
         const token = typeof (data.headers.token) == 'string' ? data.headers.token : false;
@@ -235,7 +235,7 @@ handlers._tokens = {};
 // required data: phone, password
 // optional: none
 handlers._tokens.post = function (data, callback) {
-    const phone = typeof (data.payload.phone) == 'string' && data.payload.phone.trim().length == 10 ? data.payload.phone.trim() : false;
+    const phone = typeof (data.payload.phone) == 'string' && data.payload.phone.trim().length ? data.payload.phone.trim() : false;
     const password = typeof (data.payload.password) == 'string' && data.payload.password.trim().length > 0 ? data.payload.password.trim() : false;
     if (phone && password) {
         // lookup the user who matches that phone number
@@ -399,13 +399,6 @@ handlers._checks.post = function (data, callback) {
     const method = typeof (data.payload.method) == 'string' && ['get', 'post', 'put', 'delete'].indexOf(data.payload.method) > -1 ? data.payload.method : false;
     const successCodes = typeof (data.payload.successCodes) == 'object' && data.payload.successCodes instanceof Array && data.payload.successCodes.length ? data.payload.successCodes : false;
     const timeoutSeconds = typeof (data.payload.timeoutSeconds) == 'number' && data.payload.timeoutSeconds % 1 === 0 && data.payload.timeoutSeconds >= 1 && data.payload.timeoutSeconds <= 5 ? data.payload.timeoutSeconds : false;
-    
-    console.log(protocol);
-    console.log(url);
-    console.log(method);
-    console.log(successCodes);
-    console.log(timeoutSeconds);
-    console.log(protocol && url && method && successCodes && timeoutSeconds);
 
     if (protocol && url && method && successCodes && timeoutSeconds) {
         // get the token from the headers

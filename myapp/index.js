@@ -17,7 +17,7 @@ app.init = function () {
     server.init();
 
     // start the workder
-    // workers.init();
+    workers.init();
 
 };
 

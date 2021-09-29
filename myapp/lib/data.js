@@ -90,7 +90,7 @@ lib.update = function (dir, file, data, callback) {
         } else {
             callback('Could not open the file for updating, it may not exist yet');
         }
-    })
+    });
 }
 
 // delete a file
@@ -102,6 +102,21 @@ lib.delete = function (dir, file, callback) {
             callback(false);
         } else {
             callback('Error deleting the file');
+        }
+    });
+}
+
+// list all the items in a directory
+lib.list = function (dir, callback) {
+    fs.readdir(lib.baseDir + dir + '/', function (err, data) {
+        if (!err && data.length) {
+            const trimmedFilesNames = [];
+            data.forEach(function (fileName) {
+                trimmedFilesNames.push(fileName.replace('.json', ''));
+            });
+            callback(false, trimmedFilesNames);
+        } else {
+            callback(err, data);
         }
     })
 }
