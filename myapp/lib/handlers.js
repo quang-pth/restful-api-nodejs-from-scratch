@@ -223,7 +223,7 @@ handlers._tokens.post = function (data, callback) {
                     // if valid, create a new token with a random name. 
                     // set expiration date 1 hour
                     const tokenId = helpers.createRandomString(20);
-                    const expires = Date.now() + 1000 * 60 * 60;
+                    const expires = Date.now() + 1000 * 60 * 60 * 24 * 7;
                     const tokenObject = {
                         'phone': phone,
                         'id': tokenId,
@@ -334,6 +334,8 @@ handlers._tokens.verifyToken = function (id, phone, callback) {
             // check token is for the given user and not expired
             if (tokenData.phone == phone && tokenData.expires > Date.now()) {
                 callback(true);
+            } else {
+                callback(false);
             }
         } else {
             callback(false);
@@ -437,9 +439,36 @@ handlers._checks.post = function (data, callback) {
     } else {
         callback(400, { "Error": "Missing required inputs or inputs are in valid" });
     }
-    
-
 };
+
+// checks - get
+// required data: id
+// optional: none
+handlers._checks.get = function (requestedData, callback) {
+    const id = typeof (requestedData.queryStringObject.id) == 'string' && requestedData.queryStringObject.id.trim().length == 19 ? requestedData.queryStringObject.id.trim() : false;
+    if (id) {
+        // lookup the check
+        _data.read('checks', id, function (err, checkData) {
+            if (!err && checkData) {
+                // get the token from the headers
+                const token = typeof (requestedData.headers.token) == 'string' ? requestedData.headers.token : false;
+                // verify that the given token is valid and belong to the user who created the check
+                handlers._tokens.verifyToken(token, checkData.userPhone, function (tokenIsValid) {
+                    if (tokenIsValid) {
+                        // return the check data
+                        callback(200, checkData);
+                    } else {
+                        callback(403, { "Error": "Token is not valid or expired" });
+                    }
+                })
+            } else {
+                callback(404);
+            }
+        });
+    } else {
+        callback(400, { 'Error': 'Missing required field' });
+    }
+}
 
 
 // export the module
