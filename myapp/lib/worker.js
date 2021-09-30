@@ -10,6 +10,7 @@ const https = require('https');
 const http = require('http');
 const helpers = require('./helpers');
 const url = require('url');
+const _logs = require('./logs');
 
 
 // instantiate the worker object
@@ -146,10 +147,14 @@ workers.processCheckOutcome = function (originalCheckData, checkOutcome) {
     // decide if an alert is warranted
     const alertWarranted = originalCheckData.lastChecked && originalCheckData.state !== state ? true : false;
     
+    // log the outcome 
+    const timeOfCheck = Date.now();
+    workers.log(originalCheckData, checkOutcome, state, alertWarranted, timeOfCheck);
+    
     // update the check data
     const newCheckData = originalCheckData;
     newCheckData.state = state;
-    newCheckData.lastChecked = Date.now();
+    newCheckData.lastChecked = timeOfCheck;
 
     // save the update
     _data.update('checks', newCheckData.id, newCheckData, function (err) {
@@ -179,6 +184,34 @@ workers.alertUserToStatusChange = function (newCheckData) {
         }
     })
 }
+
+workers.log = function (originalCheckData, checkOutcome, state, alertWarranted, timeOfCheck) {
+    // form the log data
+    const logData = {
+        'check': originalCheckData,
+        'outcome': checkOutcome,
+        'state': state,
+        'alert': alertWarranted,
+        'time': timeOfCheck
+    };
+
+    // convert data to a strint to store in log fs
+    const logString = JSON.stringify(logData);
+
+    // determine the name of the file
+    const logFileName = originalCheckData.id;
+
+    // append the log string to the file
+    _logs.append(logFileName, logString, function (err) {
+        if (!err) {
+            console.log("Logging to file success");
+        } else {
+            console.log("Logging to file failed");
+        }
+    });
+
+};
+
 
 // timer to execute the worker-process once per minute
 workers.loop = function () {
