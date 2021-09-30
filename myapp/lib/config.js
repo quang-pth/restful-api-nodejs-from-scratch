@@ -17,6 +17,12 @@ enviroments.staging = {
         'accountSid': 'AC9f085e2f80f48ffffdb61bb3d1542a72',
         'authToken': 'e2e71530ddb972e6c7b6ac23e246e7a3',
         'fromPhone': '+18565224686'
+    },
+    'templateGlobals': {
+        'appName': 'UptimerChecker',
+        'companyName': 'NotRealCompany, Inc',
+        'yearCreated': '2021',
+        'baseUrl': 'https://localhost:3000/'
     }
 };
 
@@ -32,6 +38,12 @@ enviroments.production = {
         'accountSid': 'AC9f085e2f80f48ffffdb61bb3d1542a72',
         'authToken': 'e2e71530ddb972e6c7b6ac23e246e7a3',
         'fromPhone': '+18565224686'
+    },
+    'templateGlobals': {
+        'appName': 'UptimerChecker',
+        'companyName': 'NotRealCompany, Inc',
+        'yearCreated': '2021',
+        'baseUrl': 'https://localhost:3000/'
     }
 };
 

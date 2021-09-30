@@ -79,21 +79,32 @@ server.unifiedServer = function (req, res) {
         debug(data.payload);
     
         // Route the request to the handler specified in the router
-        chosenHandler(data, function (statusCode, payload) {
+        chosenHandler(data, function (statusCode, payload, contentType) {
+            // determine the type of response (fallback to JSON)
+            contentType = typeof (contentType) == 'string' ? contentType : 'json';
+
             // use the status code called back by the handler, or default handler 200
             statusCode = typeof (statusCode) == 'number' ? statusCode : 200;
     
-            // use the payload called back by the handler or default to an empty object
-            payload = typeof (payload) == 'object' ? payload : {};
-    
-            // convert payload (send back to user) to a string
-            const payloadString = JSON.stringify(payload);
-    
-            // return the response
-            res.setHeader('Content-Type', 'application/json'); // returning JSON
+            // return the response parts that are content-specific
+            let payloadString = '';
+            if (contentType == 'json') {
+                res.setHeader('Content-Type', 'application/json'); // returning JSON
+                // use the payload called back by the handler or default to an empty object
+                payload = typeof (payload) == 'object' ? payload : {};
+                // convert payload (send back to user) to a string
+                payloadString = JSON.stringify(payload);
+            }
+
+            if (contentType == 'html') {
+                res.setHeader('Content-Type', 'text/html'); // return view
+                payloadString = typeof (payload) == 'string' ? payload : '';
+            }
+
+            // return the response parts that are common to all content-types
             res.writeHead(statusCode); // write status code to the res
             res.end(payloadString);
-                
+
             // If the response is 200 print green otherwise print red
             if (statusCode === 200) {
                 debug('\x1b[32m%s\x1b[0m', method.toUpperCase() + ' /' + trimmedPath + ' ' + statusCode);
@@ -107,10 +118,19 @@ server.unifiedServer = function (req, res) {
 
 // Define a request router
 server.router = {
+    '': handlers.index,
+    'account/create': handlers.accountCreate,
+    'account/edit': handlers.accountEdit,
+    'account/deleted': handlers.accountDeleted,
+    'session/create': handlers.sessionCreate,
+    'session/deleted': handlers.sessionDeleted,
+    'checks/all': handlers.checksList,
+    'checks/create': handlers.checksCreate,
+    'checks/edit': handlers.checksEdit,
     'ping': handlers.ping,
-    'users': handlers.users,
-    'tokens': handlers.tokens,
-    'checks': handlers.checks,
+    'api/users': handlers.users,
+    'api/tokens': handlers.tokens,
+    'api/checks': handlers.checks,
 };
 
 // init script
