@@ -217,7 +217,44 @@ workers.log = function (originalCheckData, checkOutcome, state, alertWarranted, 
 workers.loop = function () {
     setInterval(function () {
         workers.gatherAllChecks();
-    }, 1000 * 5);
+    }, 1000 * 60);
+}
+
+// rotate (compress) the logs
+workers.rotateLogs = function () {
+    // list all the (non-compressed) log files
+    _logs.list(false, function (err, logs) {
+        if (!err && logs && logs.length) {
+            logs.forEach(function (logName) {
+                // compress the data to a different file 
+                const logId = logName.replace('.log', '');
+                const newFileId = logId + '-' + Date.now();
+                _logs.compress(logId, newFileId, function (err) {
+                    if (!err) {
+                        // truncate the log (delete old log after move it to new file)
+                        _logs.truncate(logId, function (err) {
+                            if (!err) {
+                                console.log("Success: Truncating log file");
+                            } else {
+                                console.log("Error: Truncating log file");
+                            }
+                        });
+                    } else {
+                        console.log("Error: Compressing one of the log files ", err);
+                    }
+                });
+            });
+        } else {
+            console.log("Error: Could not find any logs to rotate");
+        }
+    });
+}
+
+// timer to execute the log-rotation process once per day
+workers.logRotationLoop = function () {
+    setInterval(function () {
+        workers.rotateLogs();
+    }, 1000 * 60 * 60 * 24);
 }
 
 // init script
@@ -228,6 +265,11 @@ workers.init = function () {
     // call the loop so the checks will execute later on
     workers.loop();
 
+    // compress all the logs immediately
+    workers.rotateLogs();
+
+    // call the compressing loop so logs will be compress later on
+    workers.logRotationLoop();
 }
 
 
