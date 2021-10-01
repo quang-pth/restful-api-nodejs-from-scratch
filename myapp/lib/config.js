@@ -22,7 +22,7 @@ enviroments.staging = {
         'appName': 'UptimerChecker',
         'companyName': 'NotRealCompany, Inc',
         'yearCreated': '2021',
-        'baseUrl': 'https://localhost:3000/'
+        'baseUrl': 'http://localhost:3000/'
     }
 };
 

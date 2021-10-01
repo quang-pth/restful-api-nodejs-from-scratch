@@ -47,6 +47,54 @@ handlers.index = function (data, callback) {
     }
 };
 
+// favicon
+handlers.favicon = function (data, callback) {
+    // reject any request that isn't GET
+    if (data.method == 'get') {
+        // read in the favicon's data
+        helpers.getStaticAsset('favicon.ico', function (err, data) {
+            if (!err && data) {
+                // callback the data
+                callback(200, data, 'favicon');
+            } else {
+                callback(500);
+            }
+        });
+    } else {
+        callback(405);
+    }
+}
+
+// public asset
+handlers.public = function (data, callback) {
+    if (data.method == 'get') {
+        // get the filename being requested
+        const trimmedAssetName = data.trimmedPath.replace('public/', '').trim();
+        if (trimmedAssetName.length) {
+            // read in the asset's data
+            helpers.getStaticAsset(trimmedAssetName, function (err, data) {
+                if (!err && data) {
+                    // determine the content type (default to plain text)
+                    let contentType = 'plain';
+                    if (trimmedAssetName.indexOf('.css') > -1) contentType = 'css'
+                    if (trimmedAssetName.indexOf('.png') > -1) contentType = 'png'
+                    if (trimmedAssetName.indexOf('.jpg') > -1) contentType = 'jpg'
+                    if (trimmedAssetName.indexOf('.ico') > -1) contentType = 'favicon'
+                    // call back the data
+                    callback(200, data, contentType);
+                } else {
+                    callback(404);
+                }
+            })
+        } else {
+            callback(404);
+        }
+    } else {
+        callback(405);
+    }
+}
+
+
 /**
  * JSON API Handlers
  */

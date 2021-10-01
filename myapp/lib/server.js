@@ -65,8 +65,11 @@ server.unifiedServer = function (req, res) {
         buffer += decoder.end();
         
         // chose the hanlder the req should go to. If one is not found use the notFound handler
-        const chosenHandler = typeof (server.router[trimmedPath]) !== 'undefined' ? server.router[trimmedPath] : handlers.notFound;
-    
+        let chosenHandler = typeof (server.router[trimmedPath]) !== 'undefined' ? server.router[trimmedPath] : handlers.notFound;
+        
+        // if the request is within the public directory, use the pulic handler
+        chosenHandler = trimmedPath.indexOf('public/') > -1 ? handlers.public : chosenHandler;
+
         // construct the data object to send to the handler
         const data = {
             'trimmedPath': trimmedPath,
@@ -101,6 +104,31 @@ server.unifiedServer = function (req, res) {
                 payloadString = typeof (payload) == 'string' ? payload : '';
             }
 
+            if (contentType == 'favicon') {
+                res.setHeader('Content-Type', 'image/x-icon'); // return view
+                payloadString = typeof (payload) !== 'undefined' ? payload : '';
+            }
+            
+            if (contentType == 'css') {
+                res.setHeader('Content-Type', 'text/css'); // return view
+                payloadString = typeof (payload) !== 'undefined' ? payload : '';
+            }
+
+            if (contentType == 'png') {
+                res.setHeader('Content-Type', 'image/png'); // return view
+                payloadString = typeof (payload) !== 'undefined' ? payload : '';
+            }
+
+            if (contentType == 'jpg') {
+                res.setHeader('Content-Type', 'image/jpg'); // return view
+                payloadString = typeof (payload) !== 'undefined' ? payload : '';
+            }
+            
+            if (contentType == 'plain') {
+                res.setHeader('Content-Type', 'text/plain'); // return view
+                payloadString = typeof (payload) !== 'undefined' ? payload : '';
+            }
+
             // return the response parts that are common to all content-types
             res.writeHead(statusCode); // write status code to the res
             res.end(payloadString);
@@ -131,6 +159,8 @@ server.router = {
     'api/users': handlers.users,
     'api/tokens': handlers.tokens,
     'api/checks': handlers.checks,
+    'favicon.ico': handlers.favicon,
+    'public': handlers.public
 };
 
 // init script
