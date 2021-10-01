@@ -79,6 +79,40 @@ handlers.accountCreate = function (data, callback) {
     }
 }
 
+// create new session
+handlers.sessionCreate = function (data, callback) {
+    // reject any request that isn't GET
+    if (data.method == 'get') {
+
+        // prepare data for interpolation
+        const templateData = {
+            'head.title': 'Login to your Cccount',
+            'head.description': 'Please enter your phone number and password to access your account',
+            'body.class': 'sessionCreate'
+        };
+
+        // read in a template as a string
+        helpers.getTemplate('sessionCreate', templateData, function (err, str) {
+            if (!err && str) {
+                // add the universal heder and footer
+                helpers.addUniversalTemplates(str, templateData, function (err, str) {
+                    if (!err && str) {
+                        // return that page as HTML
+                        callback(200, str, 'html');
+                    } else {
+                        callback(500, undefined, 'html');
+                    }
+                });
+            } else {
+                callback(500, undefined, 'html');
+            }
+        });
+    } else {
+        callback(405, undefined, 'html');
+    }
+}
+
+
 // favicon
 handlers.favicon = function (data, callback) {
     // reject any request that isn't GET
