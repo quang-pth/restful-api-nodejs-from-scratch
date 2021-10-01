@@ -20,9 +20,8 @@ handlers.index = function (data, callback) {
 
         // prepare data for interpolation
         const templateData = {
-            'head.title': 'This is the title',
-            'head.description': 'This is the meta description',
-            'body.title': 'Hello, templated world!',
+            'head.title': 'Uptime Monitoring - Made Simple',
+            'head.description': 'We offer free, simple uptime monitoring for HTTP/HTTPS sites of all kinds. When your site goes down, we\'ll send you a text to let you know',
             'body.class': 'index'
         };
 
@@ -46,6 +45,39 @@ handlers.index = function (data, callback) {
         callback(405, undefined, 'html');
     }
 };
+
+// create account handler
+handlers.accountCreate = function (data, callback) {
+    // reject any request that isn't GET
+    if (data.method == 'get') {
+
+        // prepare data for interpolation
+        const templateData = {
+            'head.title': 'Create an Account',
+            'head.description': 'Signup is easy and only takes a few seconds',
+            'body.class': 'accountCreate'
+        };
+
+        // read in a template as a string
+        helpers.getTemplate('accountCreate', templateData, function (err, str) {
+            if (!err && str) {
+                // add the universal heder and footer
+                helpers.addUniversalTemplates(str, templateData, function (err, str) {
+                    if (!err && str) {
+                        // return that page as HTML
+                        callback(200, str, 'html');
+                    } else {
+                        callback(500, undefined, 'html');
+                    }
+                });
+            } else {
+                callback(500, undefined, 'html');
+            }
+        });
+    } else {
+        callback(405, undefined, 'html');
+    }
+}
 
 // favicon
 handlers.favicon = function (data, callback) {
