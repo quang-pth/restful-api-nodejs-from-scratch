@@ -86,7 +86,7 @@ handlers.sessionCreate = function (data, callback) {
 
         // prepare data for interpolation
         const templateData = {
-            'head.title': 'Login to your Cccount',
+            'head.title': 'Login to your Account',
             'head.description': 'Please enter your phone number and password to access your account',
             'body.class': 'sessionCreate'
         };
@@ -112,6 +112,38 @@ handlers.sessionCreate = function (data, callback) {
     }
 }
 
+// delete session
+handlers.sessionDeleted = function (data, callback) {
+    // reject any request that isn't GET
+    if (data.method == 'get') {
+
+        // prepare data for interpolation
+        const templateData = {
+            'head.title': 'Logged Out',
+            'head.description': 'You have been log out of your account',
+            'body.class': 'sessionDeleted'
+        };
+
+        // read in a template as a string
+        helpers.getTemplate('sessionDeleted', templateData, function (err, str) {
+            if (!err && str) {
+                // add the universal heder and footer
+                helpers.addUniversalTemplates(str, templateData, function (err, str) {
+                    if (!err && str) {
+                        // return that page as HTML
+                        callback(200, str, 'html');
+                    } else {
+                        callback(500, undefined, 'html');
+                    }
+                });
+            } else {
+                callback(500, undefined, 'html');
+            }
+        });
+    } else {
+        callback(405, undefined, 'html');
+    }
+}
 
 // favicon
 handlers.favicon = function (data, callback) {
