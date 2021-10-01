@@ -94,7 +94,7 @@ helpers.sendTwilioSms = function (phone, msg, callback) {
             if (status == 200 || status == 201) {
                 callback(false);
             } else {
-                callback('Status code returned was: ', status);
+                callback(status);
             }
         });
 
