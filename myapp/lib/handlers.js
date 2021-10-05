@@ -9,6 +9,355 @@ const config = require('./config');
 // define the handlers
 const handlers = {};
 
+/**
+ * HTML Handlers
+ */
+
+// index handler
+handlers.index = function (data, callback) {
+    // reject any request that isn't GET
+    if (data.method == 'get') {
+
+        // prepare data for interpolation
+        const templateData = {
+            'head.title': 'Uptime Monitoring - Made Simple',
+            'head.description': 'We offer free, simple uptime monitoring for HTTP/HTTPS sites of all kinds. When your site goes down, we\'ll send you a text to let you know',
+            'body.class': 'index'
+        };
+
+        // read in a template as a string
+        helpers.getTemplate('index', templateData, function (err, str) {
+            if (!err && str) {
+                // add the universal heder and footer
+                helpers.addUniversalTemplates(str, templateData, function (err, str) {
+                    if (!err && str) {
+                        // return that page as HTML
+                        callback(200, str, 'html');
+                    } else {
+                        callback(500, undefined, 'html');
+                    }
+                });
+            } else {
+                callback(500, undefined, 'html');
+            }
+        });
+    } else {
+        callback(405, undefined, 'html');
+    }
+};
+
+// create account handler
+handlers.accountCreate = function (data, callback) {
+    // reject any request that isn't GET
+    if (data.method == 'get') {
+
+        // prepare data for interpolation
+        const templateData = {
+            'head.title': 'Create an Account',
+            'head.description': 'Signup is easy and only takes a few seconds',
+            'body.class': 'accountCreate'
+        };
+
+        // read in a template as a string
+        helpers.getTemplate('accountCreate', templateData, function (err, str) {
+            if (!err && str) {
+                // add the universal heder and footer
+                helpers.addUniversalTemplates(str, templateData, function (err, str) {
+                    if (!err && str) {
+                        // return that page as HTML
+                        callback(200, str, 'html');
+                    } else {
+                        callback(500, undefined, 'html');
+                    }
+                });
+            } else {
+                callback(500, undefined, 'html');
+            }
+        });
+    } else {
+        callback(405, undefined, 'html');
+    }
+}
+
+// create new session
+handlers.sessionCreate = function (data, callback) {
+    // reject any request that isn't GET
+    if (data.method == 'get') {
+
+        // prepare data for interpolation
+        const templateData = {
+            'head.title': 'Login to your Account',
+            'head.description': 'Please enter your phone number and password to access your account',
+            'body.class': 'sessionCreate'
+        };
+
+        // read in a template as a string
+        helpers.getTemplate('sessionCreate', templateData, function (err, str) {
+            if (!err && str) {
+                // add the universal heder and footer
+                helpers.addUniversalTemplates(str, templateData, function (err, str) {
+                    if (!err && str) {
+                        // return that page as HTML
+                        callback(200, str, 'html');
+                    } else {
+                        callback(500, undefined, 'html');
+                    }
+                });
+            } else {
+                callback(500, undefined, 'html');
+            }
+        });
+    } else {
+        callback(405, undefined, 'html');
+    }
+}
+
+// delete session
+handlers.sessionDeleted = function (data, callback) {
+    // reject any request that isn't GET
+    if (data.method == 'get') {
+
+        // prepare data for interpolation
+        const templateData = {
+            'head.title': 'Logged Out',
+            'head.description': 'You have been log out of your account',
+            'body.class': 'sessionDeleted'
+        };
+
+        // read in a template as a string
+        helpers.getTemplate('sessionDeleted', templateData, function (err, str) {
+            if (!err && str) {
+                // add the universal heder and footer
+                helpers.addUniversalTemplates(str, templateData, function (err, str) {
+                    if (!err && str) {
+                        // return that page as HTML
+                        callback(200, str, 'html');
+                    } else {
+                        callback(500, undefined, 'html');
+                    }
+                });
+            } else {
+                callback(500, undefined, 'html');
+            }
+        });
+    } else {
+        callback(405, undefined, 'html');
+    }
+}
+
+// edit your account
+handlers.accountEdit = function (data, callback) {
+    // reject any request that isn't GET
+    if (data.method == 'get') {
+
+        // prepare data for interpolation
+        const templateData = {
+            'head.title': 'Account Settings',
+            'body.class': 'accountEdit'
+        };
+
+        // read in a template as a string
+        helpers.getTemplate('accountEdit', templateData, function (err, str) {
+            if (!err && str) {
+                // add the universal heder and footer
+                helpers.addUniversalTemplates(str, templateData, function (err, str) {
+                    if (!err && str) {
+                        // return that page as HTML
+                        callback(200, str, 'html');
+                    } else {
+                        callback(500, undefined, 'html');
+                    }
+                });
+            } else {
+                callback(500, undefined, 'html');
+            }
+        });
+    } else {
+        callback(405, undefined, 'html');
+    }
+}
+
+// account has been deleted
+handlers.accountDeleted = function (data, callback) {
+    // reject any request that isn't GET
+    if (data.method == 'get') {
+
+        // prepare data for interpolation
+        const templateData = {
+            'head.title': 'Account Deleted',
+            'head.description': 'Your account has been deleted',
+            'body.class': 'accountEdit'
+        };
+
+        // read in a template as a string
+        helpers.getTemplate('accountDeleted', templateData, function (err, str) {
+            if (!err && str) {
+                // add the universal heder and footer
+                helpers.addUniversalTemplates(str, templateData, function (err, str) {
+                    if (!err && str) {
+                        // return that page as HTML
+                        callback(200, str, 'html');
+                    } else {
+                        callback(500, undefined, 'html');
+                    }
+                });
+            } else {
+                callback(500, undefined, 'html');
+            }
+        });
+    } else {
+        callback(405, undefined, 'html');
+    }
+}
+
+// create a new check
+handlers.checksCreate = function (data, callback) {
+    // reject any request that isn't GET
+    if (data.method == 'get') {
+
+        // prepare data for interpolation
+        const templateData = {
+            'head.title': 'Create a New Check',
+            'body.class': 'accountEdit'
+        };
+
+        // read in a template as a string
+        helpers.getTemplate('checksCreate', templateData, function (err, str) {
+            if (!err && str) {
+                // add the universal heder and footer
+                helpers.addUniversalTemplates(str, templateData, function (err, str) {
+                    if (!err && str) {
+                        // return that page as HTML
+                        callback(200, str, 'html');
+                    } else {
+                        callback(500, undefined, 'html');
+                    }
+                });
+            } else {
+                callback(500, undefined, 'html');
+            }
+        });
+    } else {
+        callback(405, undefined, 'html');
+    }
+}
+
+// edit a new check
+handlers.checksEdit = function (data, callback) {
+    // reject any request that isn't GET
+    if (data.method == 'get') {
+
+        // prepare data for interpolation
+        const templateData = {
+            'head.title': 'Check Details',
+            'body.class': 'checksEdit'
+        };
+
+        // read in a template as a string
+        helpers.getTemplate('checksEdit', templateData, function (err, str) {
+            if (!err && str) {
+                // add the universal heder and footer
+                helpers.addUniversalTemplates(str, templateData, function (err, str) {
+                    if (!err && str) {
+                        // return that page as HTML
+                        callback(200, str, 'html');
+                    } else {
+                        callback(500, undefined, 'html');
+                    }
+                });
+            } else {
+                callback(500, undefined, 'html');
+            }
+        });
+    } else {
+        callback(405, undefined, 'html');
+    }
+}
+
+// Dashboard view all checks
+handlers.checksList = function (data, callback) {
+    // reject any request that isn't GET
+    if (data.method == 'get') {
+
+        // prepare data for interpolation
+        const templateData = {
+            'head.title': 'Dashboard',
+            'body.class': 'checksList'
+        };
+
+        // read in a template as a string
+        helpers.getTemplate('checksList', templateData, function (err, str) {
+            if (!err && str) {
+                // add the universal heder and footer
+                helpers.addUniversalTemplates(str, templateData, function (err, str) {
+                    if (!err && str) {
+                        // return that page as HTML
+                        callback(200, str, 'html');
+                    } else {
+                        callback(500, undefined, 'html');
+                    }
+                });
+            } else {
+                callback(500, undefined, 'html');
+            }
+        });
+    } else {
+        callback(405, undefined, 'html');
+    }
+}
+
+
+// favicon
+handlers.favicon = function (data, callback) {
+    // reject any request that isn't GET
+    if (data.method == 'get') {
+        // read in the favicon's data
+        helpers.getStaticAsset('favicon.ico', function (err, data) {
+            if (!err && data) {
+                // callback the data
+                callback(200, data, 'favicon');
+            } else {
+                callback(500);
+            }
+        });
+    } else {
+        callback(405);
+    }
+}
+
+// public asset
+handlers.public = function (data, callback) {
+    if (data.method == 'get') {
+        // get the filename being requested
+        const trimmedAssetName = data.trimmedPath.replace('public/', '').trim();
+        if (trimmedAssetName.length) {
+            // read in the asset's data
+            helpers.getStaticAsset(trimmedAssetName, function (err, data) {
+                if (!err && data) {
+                    // determine the content type (default to plain text)
+                    let contentType = 'plain';
+                    if (trimmedAssetName.indexOf('.css') > -1) contentType = 'css'
+                    if (trimmedAssetName.indexOf('.png') > -1) contentType = 'png'
+                    if (trimmedAssetName.indexOf('.jpg') > -1) contentType = 'jpg'
+                    if (trimmedAssetName.indexOf('.ico') > -1) contentType = 'favicon'
+                    // call back the data
+                    callback(200, data, contentType);
+                } else {
+                    callback(404);
+                }
+            })
+        } else {
+            callback(404);
+        }
+    } else {
+        callback(405);
+    }
+}
+
+
+/**
+ * JSON API Handlers
+ */
 // user handler
 handlers.users = function (data, callback) {
     const acceptaleMethods = ['post', 'get', 'put', 'delete'];

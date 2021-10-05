@@ -183,7 +183,7 @@ workers.alertUserToStatusChange = function (newCheckData) {
         if (!err) {
             debug("Success: User was alerted to a change in their check, via sms: ", msg);
         } else {
-            debug("Error: Could not send sms to user who had a state change in their check");
+            debug("Error: Could not send sms to user who had a state change in their check: ", err);
         }
     })
 }
