@@ -13,6 +13,8 @@ const e = new _events();
 const os = require('os');
 const v8 = require('v8');
 const _data = require('./data');
+const _logs = require('./logs');
+const helpers = require('./helpers');
 
 // instatiate the CLI module object
 const cli = {};
@@ -72,7 +74,7 @@ cli.responders.help = function () {
         'more user info --{userId}': 'Show details of a specific user',
         'list checks --up  --down': 'Show a list of all the active checks in the system, including their stats. The "--up" and "--down" are both optional',
         'more check info --{checkId}': 'Show details of a specified check',
-        'list logs': 'Show a list of all the logs file available to be read (compressed and uncompressed)',
+        'list logs': 'Show a list of all the logs file available to be read (compressed only)',
         'more log info --{fileName}': 'Show details of a specified log file',
     };
 
@@ -262,11 +264,39 @@ cli.responders.moreCheckInfo = function (str) {
 }
 
 cli.responders.listLogs = function () {
-    console.log("You asked for listing logs");
+    _logs.list(true, function (err, logFileNames) {
+        if (!err && logFileNames && logFileNames.length) {
+            cli.verticalSpace();
+            logFileNames.forEach(function (logFileName) {
+                if (logFileName.indexOf('-') > -1) {
+                    console.log(logFileName);
+                    cli.verticalSpace();
+                }
+            });
+        }
+    })
 }
 
 cli.responders.moreLogInfo = function (str) {
-    console.log("You asked for more log info", str);
+    // get the ID from the string 
+    const arr = str.split('--');
+    const logFileName = typeof (arr[1]) == 'string' && arr[1].trim().length ? arr[1].trim() : false;
+    if (logFileName) {
+        // decompress the log
+        _logs.decompress(logFileName, function (err, logData) {
+            if (!err && logData) {
+                // split into ines
+                const arr = logData.split('\n');
+                arr.forEach(function (jsonString) {
+                    const logObject = helpers.parseJsonToObject(jsonString);
+                    if (logObject && JSON.stringify(logObject) !== '{}') {
+                        console.dir(logObject, { 'colors': true });
+                        cli.verticalSpace();
+                    }
+                })
+            }
+        })
+    }
 }
 // input processor
 cli.processInput = function (str) {
