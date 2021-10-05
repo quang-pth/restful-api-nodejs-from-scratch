@@ -214,7 +214,6 @@ cli.responders.moreUserInfo = function (str) {
             }
         })
     }
-
 }
 
 cli.responders.listChecks = function (str) {
@@ -247,7 +246,19 @@ cli.responders.listChecks = function (str) {
 }
 
 cli.responders.moreCheckInfo = function (str) {
-    console.log("You asked for more check info", str);
+    // get the ID from the string 
+    const arr = str.split('--');
+    const checkId = typeof (arr[1]) == 'string' && arr[1].trim().length ? arr[1].trim() : false;
+    if (checkId) {
+        // lookup the user
+        _data.read('checks', checkId, function (err, checkData) {
+            if (!err && checkData) {
+                cli.verticalSpace();
+                console.dir(checkData, { 'colors': true });
+                cli.verticalSpace();
+            }
+        })
+    }
 }
 
 cli.responders.listLogs = function () {
