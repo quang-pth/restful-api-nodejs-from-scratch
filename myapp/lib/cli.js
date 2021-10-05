@@ -218,7 +218,32 @@ cli.responders.moreUserInfo = function (str) {
 }
 
 cli.responders.listChecks = function (str) {
-    console.log("You asked for listing checks", str);
+    _data.list('checks', function (err, checkIds) {
+        if (!err && checkIds && checkIds.length) {
+            cli.verticalSpace();
+            checkIds.forEach(function (checkId) {
+                _data.read('checks', checkId, function (err, checkData) {
+                    let includeCheck = false;
+                    const lowerString = str.toLowerCase();
+
+                    // get the state, default to down
+                    const state = typeof (checkData.state) == 'string' ? checkData.state : 'down';
+                    // get the state, default to unknown
+                    const stateOrUnknown = typeof (checkData.state) == 'string' ? checkData.state : 'unknown';
+                    // if the user has specified the state or hasn't specified the state any state, include the current accordingly
+                    if (lowerString.indexOf('--' + state) > -1 || (lowerString.indexOf('--down') == -1 && lowerString.indexOf('--up') == -1)) {
+                        const line = ('ID: ' + checkData.id + ' ' + checkData.method.toUpperCase() +
+                            ' ' + checkData.protocol + '://' + checkData.url + ' State: ' + stateOrUnknown);
+                        console.log(line);
+                        cli.verticalSpace();
+                    }
+
+                })
+            })
+        
+        
+        }
+    })
 }
 
 cli.responders.moreCheckInfo = function (str) {
