@@ -196,7 +196,25 @@ cli.responders.listUsers = function () {
 }
 
 cli.responders.moreUserInfo = function (str) {
-    console.log("You asked for more user info", str);
+    // get the ID from the string 
+    const arr = str.split('--');
+    const userId = typeof (arr[1]) == 'string' && arr[1].trim().length ? arr[1].trim() : false;
+    if (userId) {
+        // lookup the user
+        _data.read('users', userId, function (err, userData) {
+            if (!err && userData) {
+                // remove the hashed password
+                delete userData.password;
+
+                // print the user JSON with text highlighting
+                cli.verticalSpace();
+                console.dir(userData, { 'colors': true });
+                cli.verticalSpace();
+
+            }
+        })
+    }
+
 }
 
 cli.responders.listChecks = function (str) {
