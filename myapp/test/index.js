@@ -12,30 +12,11 @@ _app = {};
 
 
 // container for the test
-_app.tests = {
-    'unit': {}
-};
+_app.tests = {};
 
-// assert that the getANumber function is ruturning a number
-_app.tests.unit['helpers.getANumber should return number'] = function (done) {
-    const val = helpers.getANumber();
-    assert.equal(typeof(val), 'number');
-    done();
-};
+// add on the unit test
+_app.tests.unit = require('./unit');
 
-// assert that the getANumber function is ruturning a 1
-_app.tests.unit['helpers.getANumber should return 1'] = function (done) {
-    const val = helpers.getANumber();
-    assert.equal(val, 1);
-    done();
-};
-
-// assert that the getANumber function is ruturning a 2
-_app.tests.unit['helpers.getANumber should return 2'] = function (done) {
-    const val = helpers.getANumber();
-    assert.equal(val, 2);
-    done();
-};
 
 // count all the tests
 _app.countTests = function () {
