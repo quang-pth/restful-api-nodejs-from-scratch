@@ -7,6 +7,9 @@ const helpers = require('./helpers');
 const config = require('./config');
 const _url = require('url');
 const dns = require('dns');
+const { performance, PerformanceObserver} = require('perf_hooks');
+const util = require('util');
+const debug = util.debuglog('performance');
 
 // define the handlers
 const handlers = {};
@@ -593,26 +596,50 @@ handlers._tokens = {};
 // required data: phone, password
 // optional: none
 handlers._tokens.post = function (data, callback) {
+    performance.mark('entered function');
     const phone = typeof (data.payload.phone) == 'string' && data.payload.phone.trim().length ? data.payload.phone.trim() : false;
     const password = typeof (data.payload.password) == 'string' && data.payload.password.trim().length > 0 ? data.payload.password.trim() : false;
+    performance.mark('input validated');
     if (phone && password) {
+        performance.mark('beginning user lookup');
         // lookup the user who matches that phone number
         _data.read('users', phone, function (err, userData) {
+            performance.mark('user lookup complete');
             if (!err && userData) {
                 // hash the sent password and compare it to the password stored in the user object
+                performance.mark('beginning password hashing');
                 const hashedPassword = helpers.hash(password);
+                performance.mark('password hashing complete');
                 if (hashedPassword == userData.password) {
                     // if valid, create a new token with a random name. 
-                    // set expiration date 1 hour
+                    // set expiration date 1 hour     
+                    performance.mark('creating data for token');
                     const tokenId = helpers.createRandomString(20);
                     const expires = Date.now() + 1000 * 60 * 60 * 24 * 7;
                     const tokenObject = {
                         'phone': phone,
                         'id': tokenId,
                         'expires': expires,
-                    }
-                    // store the token
+                    };
+                    // store the token    
+                    performance.mark('beginning storing token');
                     _data.create('tokens', tokenId, tokenObject, function (err) {
+                        performance.mark('storing token complete');
+                        const obs = new PerformanceObserver((list) => {
+                            const measurement = list.getEntriesByType('measure');
+                            debug('\x1b[33m%s\x1b[0m', measurement[0].name + ' ' + measurement[0].duration);
+                          });
+                          obs.disconnect();
+                          obs.observe({ entryTypes: ['measure'] });
+                        // gather all the measurements
+                        performance.measure('Beginning to end', 'entered function', 'storing token complete');
+                        performance.measure('Validate user input', 'entered function', 'input validated');
+                        performance.measure('User lookup', 'beginning user lookup', 'user lookup complete');
+                        performance.measure('Password hashing', 'beginning password hashing', 'password hashing complete');
+                        performance.measure('Token data creation', 'creating data for token', 'beginning storing token');
+                        performance.measure('Token storing', 'beginning storing token', 'storing token complete');
+
+                        
                         if (!err) {
                             callback(200, tokenObject);
                         } else {

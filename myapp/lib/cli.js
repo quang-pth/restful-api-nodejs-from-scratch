@@ -347,7 +347,7 @@ cli.init = function () {
     const _interface = readLine.createInterface({
         input: process.stdin,
         output: process.stdout,
-        prompt: '>'
+        prompt: ''
     });
 
     // create an initial prompt
