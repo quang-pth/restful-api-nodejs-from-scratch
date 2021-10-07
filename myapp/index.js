@@ -13,7 +13,7 @@ const cli = require('./lib/cli');
 const app = {};
 
 // init function 
-app.init = function () {
+app.init = function (callback) {
     // start the server
     server.init();
 
@@ -23,12 +23,15 @@ app.init = function () {
     // start the CLI, make sure it starts last
     setTimeout(function() {
         cli.init();
+        callback();
     }, 50);
 
 };
 
-// execute 
-app.init();
+// self evoking only if required directly
+if (require.main === module) {
+    app.init(function() {});
+}
 
 // export the app
 module.exports = app;

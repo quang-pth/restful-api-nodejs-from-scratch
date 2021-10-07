@@ -2,10 +2,8 @@
  * This is the test runner
  */
 
-// dependencies
-const helpers = require('./../lib/helpers');
-const assert = require('assert');
-
+// override the NODE_ENV variable
+process.env.NODE_ENV = 'testing';
 
 // Application logic for the test runner
 _app = {};
@@ -16,6 +14,7 @@ _app.tests = {};
 
 // add on the unit test
 _app.tests.unit = require('./unit');
+_app.tests.api = require('./api');
 
 
 // count all the tests
@@ -103,7 +102,9 @@ _app.produceTestReport = function (limit, successes, errors) {
     
     console.log("");
     console.log('----------------END TEST REPORT-----------------');
+    process.exit(0);
 }
+
 
 
 // run the tests
