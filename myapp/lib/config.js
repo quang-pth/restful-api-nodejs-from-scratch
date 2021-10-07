@@ -26,6 +26,25 @@ enviroments.staging = {
     }
 };
 
+// testing eviroment
+enviroments.testing = {
+    'httpPort': 4000,
+    'httpsPort': 4001,
+    'envName': 'testing',
+    'hashingSecret': 'thisIsASecret',
+    'maxChecks': 5,
+    'twilio': {
+        'accountSid': 'AC9f085e2f80f48ffffdb61bb3d1542a72',
+        'authToken': 'e2e71530ddb972e6c7b6ac23e246e7a3',
+        'fromPhone': '+18565224686'
+    },
+    'templateGlobals': {
+        'appName': 'UptimerChecker',
+        'companyName': 'NotRealCompany, Inc',
+        'yearCreated': '2021',
+        'baseUrl': 'http://localhost:3000/'
+    }
+};
 
 // production enviroment
 enviroments.production = {

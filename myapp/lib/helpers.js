@@ -14,6 +14,11 @@ const fs = require('fs');
 // container for the helpers
 const helpers = {};
 
+// sample for testing that simply returns a number
+helpers.getANumber = function () {
+    return 1;
+}
+
 // create a SHA256 hash
 helpers.hash = function (str) {
     if (typeof (str) == 'string' && str.length) {

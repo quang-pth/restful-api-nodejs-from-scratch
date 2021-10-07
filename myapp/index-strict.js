@@ -12,8 +12,11 @@ const cli = require('./lib/cli');
 // declare the app
 const app = {};
 
+// declare a global that a strict mode should catch
+foo = 'bar'; // node --use_strict index-strict.js
+
 // init function 
-app.init = function (callback) {
+app.init = function () {
     // start the server
     server.init();
 
@@ -23,15 +26,12 @@ app.init = function (callback) {
     // start the CLI, make sure it starts last
     setTimeout(function() {
         cli.init();
-        callback();
     }, 50);
 
 };
 
-// self evoking only if required directly
-if (require.main === module) {
-    app.init(function() {});
-}
+// execute 
+app.init();
 
 // export the app
 module.exports = app;
